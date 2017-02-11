@@ -1,4 +1,3 @@
-
 package edu.ipn.cecyt9.calculadora;
 
 import java.awt.BorderLayout;
@@ -9,14 +8,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
-import javax.swing.JButton;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
-
 /**
  * 
  * Interfaz para nuestra calculadora basica
@@ -36,25 +33,26 @@ public class Calculadora extends JFrame {
 	JTextField pantalla;
 
 	/** guarda el resultado de la operacion anterior o el número tecleado */
-	double resultado;
+	double resultado=0;
 
         double resultado2;
 	/** para guardar la operacion a realizar */
-	String operacion;
+	String operacion="";
 
 	/** Los paneles donde colocaremos los botones */
 	JPanel panelNumeros, panelOperaciones;
 
 	/** Indica si estamos iniciando o no una operación */
 	boolean nuevaOperacion = true;
+        long a=1;
 
 	/**
 	 * Constructor. Crea los botones y componentes de la calculadora
 	 */
 	public Calculadora() {
 		super();
-		setSize(250, 300);
-		setTitle("Calculadora Simple");
+		setSize(400, 300);
+		setTitle("Calculadora Pro");
 		setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		setResizable(false);
 
@@ -90,12 +88,16 @@ public class Calculadora extends JFrame {
 		nuevoBotonOperacion("-");
 		nuevoBotonOperacion("*");
 		nuevoBotonOperacion("/");
-		nuevoBotonOperacion("=");
+                nuevoBotonOperacion("!");
+                nuevoBotonOperacion("√");
+                nuevoBotonOperacion("Σ");
+                nuevoBotonOperacion("^");
+                nuevoBotonOperacion("Round");
 		nuevoBotonOperacion("CE");
+		nuevoBotonOperacion("=");
 
 		panel.add("East", panelOperaciones);
 
-		validate();
 	}
 
 	/**
@@ -109,14 +111,12 @@ public class Calculadora extends JFrame {
 		JButton btn = new JButton();
 		btn.setText(digito);
 		btn.addMouseListener(new MouseAdapter() {
-
 			@Override
 			public void mouseReleased(MouseEvent evt) {
 				JButton btn = (JButton) evt.getSource();
 				numeroPulsado(btn.getText());
 			}
 		});
-
 		panelNumeros.add(btn);
 	}
 
@@ -128,9 +128,7 @@ public class Calculadora extends JFrame {
 	private void nuevoBotonOperacion(String operacion) {
 		JButton btn = new JButton(operacion);
 		btn.setForeground(Color.RED);
-
 		btn.addMouseListener(new MouseAdapter() {
-
 			@Override
 			public void mouseReleased(MouseEvent evt) {
 				JButton btn = (JButton) evt.getSource();
@@ -162,17 +160,24 @@ public class Calculadora extends JFrame {
 	 * @param tecla
 	 */
 	private void operacionPulsado(String tecla) {
-		if (tecla.equals("=")) {
-			calcularResultado();
+		if(tecla.equals("=")){
+			calcularResultado();                        
 		} else if (tecla.equals("CE")) {
 			resultado = 0;
 			pantalla.setText("");
 			nuevaOperacion = true;
 		} else {
 			operacion = tecla;
-			if ((resultado > 0) && !nuevaOperacion) {
+                        if(operacion.equals("√")){                           
+                            calcularResultado();
+                        }else if(operacion.equals("Σ")){
+                            calcularResultado();
+                        }else if(operacion.equals("Round")){
+                            calcularResultado();
+                        }else if ((resultado > 0) && !nuevaOperacion) {
 				calcularResultado();
 			} else {
+                            
 				resultado = new Double(pantalla.getText());
 			}
 		}
@@ -184,17 +189,37 @@ public class Calculadora extends JFrame {
 	 * Calcula el resultado y lo muestra por pantalla
 	 */
 	private void calcularResultado() {
-		if (operacion.equals("+")) {
+		if(operacion.equals("+")) {
 			resultado += new Double(pantalla.getText());
-		} else if (operacion.equals("-")) {
+		}else if (operacion.equals("-")) {
 			resultado -= new Double(pantalla.getText());
 		} else if (operacion.equals("/")) {
 			resultado /= new Double(pantalla.getText());
 		} else if (operacion.equals("*")) {
 			resultado *= new Double(pantalla.getText());
-		}
+		} else if (operacion.equals("!")) {
+                        resultado = new Double(pantalla.getText());            
+                        a=1;
+                        for(int i=2;i<=resultado;i++){
+                            a= a*i;
+                        }
+			resultado = new Double(a);
+		} else if (operacion.equals("√")) {
+			resultado = Double.parseDouble(pantalla.getText());
+                        resultado= Math.sqrt(resultado);
+		}else if (operacion.equals("Σ")) {
+			resultado = Double.parseDouble(pantalla.getText());                        
+                        resultado= (resultado*(resultado+1))/2;	
+                }else if (operacion.equals("^")) {
+			resultado = Math.pow(resultado, Double.parseDouble(pantalla.getText()));                                               
+                }else if (operacion.equals("Round")) {
+			resultado = Math.round(resultado);                                               
+                }else{
+			resultado = new Double(pantalla.getText());                                              
+                }
+  
 
 		pantalla.setText("" + resultado);
-		operacion = "";
+		operacion = "";               
 	}
 }
